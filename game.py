@@ -4,6 +4,7 @@ import numpy as np
 import random
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import pickle
 
 # ---------------- Tic-Tac-Toe Environment ----------------
 class TicTacToe2D:
@@ -64,6 +65,7 @@ class TicTacToe2D:
 
 # ---------------- Monte Carlo Helpers ----------------
 def epsilon_greedy_action(Q, state, avail_actions, epsilon):
+    normaized_state=normailze_state(state,env.current_player)
     if random.random() < epsilon:
         return random.choice(avail_actions)
     qvals = Q[state]
@@ -84,7 +86,10 @@ def can_win_next_move(board, player):
                 if env_temp.check_winner() == player:
                     return (r, c)
     return None
-
+def normailze_state(state,player):
+    if player==-1:
+        return tuple(-x for x in state)
+    return state
 def get_immediate_reward(old_board, action, new_board, player):
     """Give immediate rewards for good/bad moves."""
     r, c = action
@@ -164,8 +169,8 @@ class TrainingUI:
         self.losses = 0
         self.draws = 0
         self.episode = 0
-        self.num_episodes = 10
-        self.epsilon = 0.3
+        self.num_episodes = 20000
+        self.epsilon = 0.4
         self.epsilon_decay = 0.995
 
         # Play mode variables
@@ -189,7 +194,24 @@ class TrainingUI:
 
         self.reset_button = tk.Button(button_frame, text="Reset Training", command=self.reset_training)
         self.reset_button.pack(side=tk.LEFT, padx=5)
-
+        self.save_button=tk.Button(button_frame,text="Save Model",command=self.save_q_table)
+        self.save_button.pack(side=tk.LEFT,padx=5)
+        self.load_button=tk.Button(button_frame,text="load Model",command=self.load_q_table)
+    def save_q_table(self):
+        file=filedialog.asksaveasfilename(defaultextension=".pkl",filetypes=[("Pickle Files","*.pkl")])
+        if file:
+            with open(file, "wb") as f:
+                pickle.dump(self.Q,f)
+            messagebox.showinfo("saved",f"q-table saved to {file}")
+    def load_q_table(self):
+        file=filedialog.askopenfilename(filetypes=[("Pickle Files","*.pkl")])
+        if file:
+            with open(file,"rb") as f:
+                self.Q=pickle.load(f)
+            messagebox.showinfo("Loaded",f"Q-tbale loaded from {file}")
+            self.play_button.config(state="normal")
+            self.info_label.config(text="Loaded pre_trained Q-table. Ready to play!")        
+            
     def create_board(self):
         self.buttons = {}
         for r in range(3):
@@ -253,6 +275,8 @@ class TrainingUI:
             self.winrate_label.config(text=f"Win Rate: {win_rate:.1f}%")
         else:
             self.winrate_label.config(text="Win Rate: 0.0%")
+    def use_pre_trained_data(self):
+        self
 
     def train_step(self):
         if self.episode >= self.num_episodes:
@@ -301,7 +325,7 @@ class TrainingUI:
             self.info_label.config(text=f"Game Over: {result_text}")
 
             # Next episode after brief delay
-            self.root.after(500, self.train_step)
+            self.root.after(50, self.train_step)
             return
 
         # Apply next move
@@ -314,7 +338,7 @@ class TrainingUI:
         self.current_move_index += 1
 
         # Show next move after delay
-        self.root.after(300, self.play_episode_step)
+        self.root.after(3, self.play_episode_step)
 
     def start_play_mode(self):
         """Start interactive play mode against the trained agent"""
