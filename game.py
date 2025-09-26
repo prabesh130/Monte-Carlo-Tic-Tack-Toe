@@ -65,7 +65,7 @@ class TicTacToe2D:
 
 # ---------------- Monte Carlo Helpers ----------------
 def epsilon_greedy_action(Q, state, avail_actions, epsilon):
-    normaized_state=normailze_state(state,env.current_player)
+    
     if random.random() < epsilon:
         return random.choice(avail_actions)
     qvals = Q[state]
@@ -86,10 +86,7 @@ def can_win_next_move(board, player):
                 if env_temp.check_winner() == player:
                     return (r, c)
     return None
-def normailze_state(state,player):
-    if player==-1:
-        return tuple(-x for x in state)
-    return state
+
 def get_immediate_reward(old_board, action, new_board, player):
     """Give immediate rewards for good/bad moves."""
     r, c = action
@@ -108,7 +105,7 @@ def get_immediate_reward(old_board, action, new_board, player):
         if can_win_next_move(new_board, opponent):
             reward -= 2.0  # didn't block
         else:
-            reward += 3.0  # blocked
+            reward += 10.0  # blocked
 
     # Small preference for center / corners
     if (r, c) == (1, 1):
@@ -118,6 +115,14 @@ def get_immediate_reward(old_board, action, new_board, player):
 
     return reward
 
+def semi_skilled_opponent(board):
+    opponent=-1
+    agent=1
+    block_move=can_win_next_move(board,agent)
+    if block_move:
+        return block_move
+    moves=[(r,c) for r in range(3) for  c in range(3)if board[r,c]==0]
+    return random.choice(moves)
 def generate_episode(env, Q, epsilon):
     """Generate a full episode with both players' moves."""
     env.reset()
@@ -137,7 +142,11 @@ def generate_episode(env, Q, epsilon):
             state = next_state
         else:
             # Opponent's turn (random)
-            action = random.choice(avail)
+            if random.random()<0.7:
+                action=random.choice(avail)
+            else:
+                action=semi_skilled_opponent(env.board)
+            
             old_board = env.board.copy()
             next_state, reward, done = env.step(action)
             episode.append((tuple(old_board.flatten()), action, -1, 0.0))
@@ -169,7 +178,7 @@ class TrainingUI:
         self.losses = 0
         self.draws = 0
         self.episode = 0
-        self.num_episodes = 20000
+        self.num_episodes = 1000
         self.epsilon = 0.4
         self.epsilon_decay = 0.995
 
@@ -197,6 +206,7 @@ class TrainingUI:
         self.save_button=tk.Button(button_frame,text="Save Model",command=self.save_q_table)
         self.save_button.pack(side=tk.LEFT,padx=5)
         self.load_button=tk.Button(button_frame,text="load Model",command=self.load_q_table)
+        self.load_button.pack(side=tk.LEFT,padx=5)
     def save_q_table(self):
         file=filedialog.asksaveasfilename(defaultextension=".pkl",filetypes=[("Pickle Files","*.pkl")])
         if file:
@@ -325,7 +335,7 @@ class TrainingUI:
             self.info_label.config(text=f"Game Over: {result_text}")
 
             # Next episode after brief delay
-            self.root.after(50, self.train_step)
+            self.root.after(5, self.train_step)
             return
 
         # Apply next move
@@ -338,7 +348,7 @@ class TrainingUI:
         self.current_move_index += 1
 
         # Show next move after delay
-        self.root.after(3, self.play_episode_step)
+        self.root.after(1, self.play_episode_step)
 
     def start_play_mode(self):
         """Start interactive play mode against the trained agent"""
