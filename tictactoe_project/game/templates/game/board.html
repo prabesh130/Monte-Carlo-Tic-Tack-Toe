@@ -1,0 +1,29 @@
+{% extends "game/base.html" %}
+{% load custom_tags %}
+
+{% block content %}
+<div id="board">
+    <table border="1" style="border-collapse: collapse; text-align: center; font-size: 2em;">
+      {% for r in 0|to:3 %}
+      <tr>
+        {% for c in 0|to:3 %}
+          <td style="width: 60px; height: 60px;">
+            {% if board.r.c == 0 %}
+              <button hx-get="{% url 'make_move' r c %}" 
+                      hx-target="#board"
+                      hx-swap="outerHTML"
+                      style="width:100%;height:100%;font-size:2em;">
+                &nbsp;
+              </button>
+            {% elif board.r.c == 1 %}
+              X
+            {% else %}
+              O
+            {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+      {% endfor %}
+    </table>
+</div>
+{% endblock %}
