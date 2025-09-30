@@ -3,6 +3,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.template.loader import render_to_string
 import numpy as np
+from collections import defaultdict
+from django.http import JsonResponse
+import random
 
 from .agent import Trainer  # import your trainer
 
@@ -42,3 +45,38 @@ def start_training(request):
     global trainer
     trainer.train(episodes=5000, epsilon=0.1, alpha=0.1)
     return HttpResponse("<p>Training complete! Model saved.</p>")
+
+
+Q=defaultdict(lambda:defaultdict(float))
+wins=loses=draws=episode=0
+epsilon=0.3
+num_episode=1000
+def train_step(request):
+    global Q,wins,losses,draws,episode,epsilon
+    if episode>=num_episode:
+        return JsonResponse({
+            "episode":episode,
+            "wins":wins,
+            "losses":losses,
+            "draws":draws,
+            "episode":episode,
+            "status":f"Training complete after {num_episode} episodes!",
+            "training_done":True
+        })
+    result=random.random().choice([1,-1,0])
+    if result==1:win+=1
+    elif result==-1: losses+=1
+    else: draws+=1
+
+    episode+=1
+    epsilon=max(0.01,epsilon*0.995)
+
+    return JsonResponse({
+          "episode": episode,
+        "wins": wins,
+        "losses": losses,
+        "draws": draws,
+        "epsilon": epsilon,
+        "status": f"Training... episode {episode}",
+        "training_done": False
+    })
