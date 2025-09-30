@@ -1,22 +1,29 @@
 from django.shortcuts import render
-from .agent import TicTacToe2D
-import random
-env=TicTacToe2D()
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+
+# 0 = empty, 1 = X, 2 = O
+board = [[0, 0, 0],
+         [0, 0, 0],
+         [0, 0, 0]]
+
+current_player = 1  # start with X
+
 
 def board_view(request):
-    board=request.session.get('board',[[''for _ in range(3)] for _ in range(3)])
+    return render(request, "game/board.html", {"board": board})
 
-    context={
-        'board':board,
-        'range':range(3),
-    }
-    return render(request,"game/board.html",context)
-def make_move(request,row,col):
-    if env.board[row][col]==0:
-        env.step((row,col))
-        if env.current_player==-1 and not env.check_winner():
-            moves=env.available_actions()
-            action=random.choce(moves)
-            env.step(action)
-    context={"board":env.board.tolist(),"current_player":env.current_player}
-    return render(request,"game/board.html",context)
+
+def make_move(request, r, c):
+    global current_player, board
+
+    r, c = int(r), int(c)
+
+    # only allow move if cell is empty
+    if board[r][c] == 0:
+        board[r][c] = current_player
+        # switch player
+        current_player = 2 if current_player == 1 else 1
+
+    html = render_to_string("board.html", {"board": board}, request=request)
+    return HttpResponse(html)

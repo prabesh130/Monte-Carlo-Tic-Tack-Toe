@@ -17,7 +17,7 @@
               </button>
             {% elif board|get_item:r|get_item:c == 1 %}
               X
-            {% else %}
+            {% elif board|get_item:r|get_item:c == 2 %}
               O
             {% endif %}
           </td>
