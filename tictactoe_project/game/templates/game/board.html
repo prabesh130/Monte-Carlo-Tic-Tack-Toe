@@ -26,4 +26,18 @@
       {% endfor %}
     </table>
 </div>
+
+<!-- Training controls go here -->
+<div style="margin-top:20px; text-align:center;">
+  <button hx-get="{% url 'start_training' %}"
+          hx-target="#training-status"
+          hx-swap="innerHTML"
+          style="padding:10px 20px; font-size:1.2em;">
+    Start Training
+  </button>
+</div>
+
+<div id="training-status" style="margin-top:10px; text-align:center;">
+  <!-- Training status will be updated here -->
+</div>
 {% endblock %}
