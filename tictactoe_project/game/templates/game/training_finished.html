@@ -1,0 +1,19 @@
+<div id="training-container">
+    
+    <p id="training-status" style="margin-top:10px; text-align:center;">
+        {{ status }}
+    </p>
+    <div id="stats">
+      <p id="episode">Episode: {{ stats.episode }}</p>
+      <p id="wins">Wins: {{ stats.wins }}</p>
+      <p id="losses">Losses: {{ stats.losses }}</p>
+      <p id="draws">Draws: {{ stats.draws }}</p>
+      <p id="epsilon">Epsilon: {{ stats.epsilon|floatformat:4 }}</p>
+    </div>
+</div>
+
+<script>
+    // Since HTMX polling is stopped via HX-Trigger, we use a simple script to re-enable the button
+    document.getElementById("start-training-btn").disabled = false;
+    document.getElementById("play-agent").disabled = false;
+</script>

@@ -27,44 +27,25 @@
     </table>
 </div>
 
-<!-- Training controls go here -->
 <div style="margin-top:20px; text-align:center;">
-  <button hx-get="{% url 'start_training' %}"
-          hx-target="#training-status"
-          hx-swap="innerHTML"
+  <button hx-get="{% url 'start_training' %}" 
+          hx-target="#training-container"
+          hx-swap="outerHTML"
+          id="start-training-btn"
           style="padding:10px 20px; font-size:1.2em;">
     Start Training
   </button>
+  <button id="play-agent" disabled>Play vs Agent</button>
 </div>
 
-<div id="training-status" style="margin-top:10px; text-align:center;">
-  <!-- Training status will be updated here -->
+<div id="training-container">
+    <p id="training-status" style="margin-top:10px; text-align:center;">Ready to train....</p>
+    <div id="stats">
+      <p id="episode">Episode: 0</p>
+      <p id="wins">Wins: 0</p>
+      <p id="losses">Losses: 0</p>
+      <p id="draws">Draws: 0</p>
+      <p id="epsilon">Epsilon: 1.0</p>
+    </div>
 </div>
-<div id="stats">
-  <p id="episode">Episode: 0</p>
-  <p id="wins">Wins: 0</p>
-  <p id="losses">Losses: 0</p>
-  <p id="draws">Draws: 0</p>
-  <p id="epsilon">Epsilon: 1.0</p>
-  <p id="status">Ready to train....</p>
-
-</div>
-<script>
-  document.getElementById("start-training").addEventListener("click",()=>{fetch("/train_step")
-    .then(res=>res.json())
-    .then(data=>{
-      document.getElementById("episode").innerText = "Episode: " + data.episode;
-      document.getElementById("wins").innerText = "Wins: " + data.wins;
-      document.getElementById("losses").innerText = "Losses: " + data.losses;
-      document.getElementById("draws").innerText = "Draws: " + data.draws;
-      document.getElementById("epsilon").innerText = "Epsilon: " + data.epsilon.toFixed(2);
-      document.getElementById("status").innerText = data.status;
-      if (data.training_done) {
-        
-          document.getElementById("play-agent").disbaled=false;}
-         // Adjust delay as needed
-      
-    });
-  });
-</script>
 {% endblock %}

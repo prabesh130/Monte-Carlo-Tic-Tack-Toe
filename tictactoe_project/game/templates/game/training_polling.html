@@ -1,0 +1,16 @@
+<div id="training-container"
+     hx-get="{% url 'train_step_html' %}"
+     hx-trigger="every 50ms"
+     hx-swap="outerHTML">
+    
+    <p id="training-status" style="margin-top:10px; text-align:center;">
+        {% if status %}{{ status }}{% else %}Training initiated... Polling server.{% endif %}
+    </p>
+    <div id="stats">
+      <p id="episode">Episode: {{ stats.episode|default:0 }}</p>
+      <p id="wins">Wins: {{ stats.wins|default:0 }}</p>
+      <p id="losses">Losses: {{ stats.losses|default:0 }}</p>
+      <p id="draws">Draws: {{ stats.draws|default:0 }}</p>
+      <p id="epsilon">Epsilon: {{ stats.epsilon|default:1.0|floatformat:4 }}</p>
+    </div>
+</div>

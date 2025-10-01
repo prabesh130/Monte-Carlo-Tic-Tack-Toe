@@ -188,6 +188,16 @@ class Trainer:
                     new_val = old_val + alpha * (reward - old_val)
                     self.Q[state][action] = new_val
         self.save_model()
+    def train_one_episode(self,epsilon,alpha):
+        episode,final_winner=TicTacToe2D.generate_episode(self.env,self.Q,epsilon)
+
+        for state,action,player,reward in episode:
+            if player==1: 
+                old_val=self.Q[state].get(action,0.0)
+                new_val=old_val+alpha*(reward-old_val)
+                self.Q[state][action]=new_val
+            self.save_model()
+            return final_winner  
 
     def act(self, board, epsilon=0.0):
         """Choose best move for given board state."""
