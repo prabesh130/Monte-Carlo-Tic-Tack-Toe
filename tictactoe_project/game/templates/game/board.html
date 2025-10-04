@@ -48,4 +48,11 @@
       <p id="epsilon">Epsilon: 1.0</p>
     </div>
 </div>
+<div id="animation-poller"
+     style="display:none;"
+     hx-get="{% url 'animate_episode_step'%}"
+     hx-trigger="animmateEpisode from body,every 100ms"
+     hx-target="#board"
+     hx-swap="outerHTML">
+</div>
 {% endblock %}

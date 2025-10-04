@@ -1,0 +1,17 @@
+table style="border-collapse: collapse; margin: 0 auto;">
+    {% for row in board %}
+    <tr>
+        {% for cell in row %}
+        <td style="width: 80px; height: 80px; border: 2px solid #333; text-align: center; vertical-align: middle; font-size: 48px; font-weight: bold; background-color: #f9f9f9;">
+            {% if cell == 1 %}
+                <span style="color: #2196F3;">X</span>
+            {% elif cell == -1 %}
+                <span style="color: #f44336;">O</span>
+            {% else %}
+                &nbsp;
+            {% endif %}
+        </td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>

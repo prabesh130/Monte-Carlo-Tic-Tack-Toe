@@ -1,0 +1,31 @@
+<div id="training-container">
+    
+    <p id="training-status" style="margin-top:10px; text-align:center; font-weight: bold; color: blue;">
+        {{ status }} - ANIMATION MODE ACTIVE
+    </p>
+    
+    <div id="stats" style="margin: 20px; padding: 10px; border: 1px solid #ccc; background-color: #ffffcc;">
+        <strong>Training Statistics:</strong><br>
+        Wins: {{ stats.wins }} | 
+        Losses: {{ stats.losses }} | 
+        Draws: {{ stats.draws }}<br>
+        Episode: {{ stats.episode }}/{{ stats.num_episodes }}<br>
+        Epsilon: {{ stats.epsilon|floatformat:4 }}
+    </div>
+    
+    <!-- Debug: This should be visible -->
+    <div style="background: red; color: white; padding: 10px; margin: 20px;">
+        ⚠️ DEBUG: Animation trigger template loaded! The board should appear below.
+    </div>
+    
+    <!-- CRITICAL: This div starts the animation polling -->
+    <div id="board" 
+         hx-get="/animate-step/"
+         hx-trigger="every 300ms"
+         hx-swap="innerHTML"
+         style="margin: 20px auto; width: fit-content; min-height: 250px; border: 2px solid red; padding: 10px; background-color: #fff3cd;">
+        <div style="text-align: center; padding: 40px;">
+            🎬 Animation starting... (polling /animate-step/ every 300ms)
+        </div>
+    </div>
+</div>
